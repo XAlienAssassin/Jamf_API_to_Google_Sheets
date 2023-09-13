@@ -93,8 +93,6 @@ function classOf2024() {
     sheet.appendRow(rowData);
   });
 
-  formatSheet(sheet);
-
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
 
@@ -150,8 +148,6 @@ function classOf2025() {
     var rowData = [fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department];
     sheet.appendRow(rowData);
   });
-
-  formatSheet(sheet);
 
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
@@ -209,8 +205,6 @@ function classOf2026() {
     sheet.appendRow(rowData);
   });
 
-  formatSheet(sheet);
-
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
 
@@ -266,8 +260,6 @@ function classOf2027() {
     var rowData = [fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department];
     sheet.appendRow(rowData);
   });
-
-  formatSheet(sheet);
 
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
@@ -325,8 +317,6 @@ function classOf2028() {
     sheet.appendRow(rowData);
   });
 
-  formatSheet(sheet);
-
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
 
@@ -382,8 +372,6 @@ function classOf2029() {
     var rowData = [fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department];
     sheet.appendRow(rowData);
   });
-
-  formatSheet(sheet);
 
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
@@ -441,8 +429,6 @@ function classOf2030() {
     sheet.appendRow(rowData);
   });
 
-  formatSheet(sheet);
-
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
 
@@ -499,8 +485,6 @@ function classOf2031() {
     sheet.appendRow(rowData);
   });
 
-  formatSheet(sheet);
-
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
 
@@ -556,8 +540,6 @@ function classOf2032() {
     var rowData = [fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department];
     sheet.appendRow(rowData);
   });
-
-  formatSheet(sheet);
 
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
@@ -616,8 +598,6 @@ function classOf2033() {
     var rowData = [fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department];
     sheet.appendRow(rowData);
   });
-
-  formatSheet(sheet);
 
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
