@@ -66,17 +66,20 @@ function classOf2024() {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = spreadsheet.getActiveSheet();
 
-  // Check if the sheet contains data before clearing it
-  if (sheet.getLastRow() > 0) {
-    // Clear existing data in the sheet
-    sheet.getRange(1, 1, sheet.getLastRow(), 7).clear();
+  // Find the last row with data in column A
+  var lastRowWithData = sheet.getLastRow();
+
+  // If there is data below the headers, clear that specific range
+  if (lastRowWithData > 1) {
+    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
   }
 
   // Write headers to the sheet
   var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
-  sheet.appendRow(headers);
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
 
-  // Iterate through the XML data and write it to the sheet
+  // Iterate through the XML data and write it to the sheet starting below the headers
+  var rowData = [];
   computerElements.forEach(function(computer) {
     //changes the font and the size before the data populates into the google
     changeFontAndSize();
@@ -89,9 +92,11 @@ function classOf2024() {
     var lastCheckIn = computer.getChildText("Last_Check_in");
     var department = computer.getChildText("Department");
 
-    var rowData = [fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department];
-    sheet.appendRow(rowData);
+    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
   });
+
+  // Write the data starting below the headers
+  sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
 
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
@@ -122,17 +127,20 @@ function classOf2025() {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = spreadsheet.getActiveSheet();
 
-  // Check if the sheet contains data before clearing it
-  if (sheet.getLastRow() > 0) {
-    // Clear existing data in the sheet
-    sheet.getRange(1, 1, sheet.getLastRow(), 7).clear();
+  // Find the last row with data in column A
+  var lastRowWithData = sheet.getLastRow();
+
+  // If there is data below the headers, clear that specific range
+  if (lastRowWithData > 1) {
+    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
   }
 
   // Write headers to the sheet
   var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
-  sheet.appendRow(headers);
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
 
-  // Iterate through the XML data and write it to the sheet
+  // Iterate through the XML data and write it to the sheet starting below the headers
+  var rowData = [];
   computerElements.forEach(function(computer) {
     //changes the font and the size before the data populates into the google
     changeFontAndSize();
@@ -145,9 +153,11 @@ function classOf2025() {
     var lastCheckIn = computer.getChildText("Last_Check_in");
     var department = computer.getChildText("Department");
 
-    var rowData = [fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department];
-    sheet.appendRow(rowData);
+    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
   });
+
+  // Write the data starting below the headers
+  sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
 
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
@@ -178,17 +188,20 @@ function classOf2026() {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = spreadsheet.getActiveSheet();
 
-  // Check if the sheet contains data before clearing it
-  if (sheet.getLastRow() > 0) {
-    // Clear existing data in the sheet
-    sheet.getRange(1, 1, sheet.getLastRow(), 7).clear();
+  // Find the last row with data in column A
+  var lastRowWithData = sheet.getLastRow();
+
+  // If there is data below the headers, clear that specific range
+  if (lastRowWithData > 1) {
+    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
   }
 
   // Write headers to the sheet
   var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
-  sheet.appendRow(headers);
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
 
-  // Iterate through the XML data and write it to the sheet
+  // Iterate through the XML data and write it to the sheet starting below the headers
+  var rowData = [];
   computerElements.forEach(function(computer) {
     //changes the font and the size before the data populates into the google
     changeFontAndSize();
@@ -201,9 +214,11 @@ function classOf2026() {
     var lastCheckIn = computer.getChildText("Last_Check_in");
     var department = computer.getChildText("Department");
 
-    var rowData = [fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department];
-    sheet.appendRow(rowData);
+    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
   });
+
+  // Write the data starting below the headers
+  sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
 
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
@@ -234,17 +249,20 @@ function classOf2027() {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = spreadsheet.getActiveSheet();
 
-  // Check if the sheet contains data before clearing it
-  if (sheet.getLastRow() > 0) {
-    // Clear existing data in the sheet
-    sheet.getRange(1, 1, sheet.getLastRow(), 7).clear();
+  // Find the last row with data in column A
+  var lastRowWithData = sheet.getLastRow();
+
+  // If there is data below the headers, clear that specific range
+  if (lastRowWithData > 1) {
+    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
   }
 
   // Write headers to the sheet
   var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
-  sheet.appendRow(headers);
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
 
-  // Iterate through the XML data and write it to the sheet
+  // Iterate through the XML data and write it to the sheet starting below the headers
+  var rowData = [];
   computerElements.forEach(function(computer) {
     //changes the font and the size before the data populates into the google
     changeFontAndSize();
@@ -257,9 +275,11 @@ function classOf2027() {
     var lastCheckIn = computer.getChildText("Last_Check_in");
     var department = computer.getChildText("Department");
 
-    var rowData = [fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department];
-    sheet.appendRow(rowData);
+    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
   });
+
+  // Write the data starting below the headers
+  sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
 
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
@@ -290,17 +310,20 @@ function classOf2028() {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = spreadsheet.getActiveSheet();
 
-  // Check if the sheet contains data before clearing it
-  if (sheet.getLastRow() > 0) {
-    // Clear existing data in the sheet
-    sheet.getRange(1, 1, sheet.getLastRow(), 7).clear();
+  // Find the last row with data in column A
+  var lastRowWithData = sheet.getLastRow();
+
+  // If there is data below the headers, clear that specific range
+  if (lastRowWithData > 1) {
+    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
   }
 
   // Write headers to the sheet
   var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
-  sheet.appendRow(headers);
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
 
-  // Iterate through the XML data and write it to the sheet
+  // Iterate through the XML data and write it to the sheet starting below the headers
+  var rowData = [];
   computerElements.forEach(function(computer) {
     //changes the font and the size before the data populates into the google
     changeFontAndSize();
@@ -313,9 +336,11 @@ function classOf2028() {
     var lastCheckIn = computer.getChildText("Last_Check_in");
     var department = computer.getChildText("Department");
 
-    var rowData = [fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department];
-    sheet.appendRow(rowData);
+    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
   });
+
+  // Write the data starting below the headers
+  sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
 
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
@@ -346,17 +371,20 @@ function classOf2029() {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = spreadsheet.getActiveSheet();
 
-  // Check if the sheet contains data before clearing it
-  if (sheet.getLastRow() > 0) {
-    // Clear existing data in the sheet
-    sheet.getRange(1, 1, sheet.getLastRow(), 7).clear();
+  // Find the last row with data in column A
+  var lastRowWithData = sheet.getLastRow();
+
+  // If there is data below the headers, clear that specific range
+  if (lastRowWithData > 1) {
+    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
   }
 
   // Write headers to the sheet
   var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
-  sheet.appendRow(headers);
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
 
-  // Iterate through the XML data and write it to the sheet
+  // Iterate through the XML data and write it to the sheet starting below the headers
+  var rowData = [];
   computerElements.forEach(function(computer) {
     //changes the font and the size before the data populates into the google
     changeFontAndSize();
@@ -369,9 +397,11 @@ function classOf2029() {
     var lastCheckIn = computer.getChildText("Last_Check_in");
     var department = computer.getChildText("Department");
 
-    var rowData = [fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department];
-    sheet.appendRow(rowData);
+    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
   });
+
+  // Write the data starting below the headers
+  sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
 
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
@@ -402,17 +432,20 @@ function classOf2030() {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = spreadsheet.getActiveSheet();
 
-  // Check if the sheet contains data before clearing it
-  if (sheet.getLastRow() > 0) {
-    // Clear existing data in the sheet
-    sheet.getRange(1, 1, sheet.getLastRow(), 7).clear();
+  // Find the last row with data in column A
+  var lastRowWithData = sheet.getLastRow();
+
+  // If there is data below the headers, clear that specific range
+  if (lastRowWithData > 1) {
+    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
   }
 
   // Write headers to the sheet
   var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
-  sheet.appendRow(headers);
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
 
-  // Iterate through the XML data and write it to the sheet
+  // Iterate through the XML data and write it to the sheet starting below the headers
+  var rowData = [];
   computerElements.forEach(function(computer) {
     //changes the font and the size before the data populates into the google
     changeFontAndSize();
@@ -425,9 +458,11 @@ function classOf2030() {
     var lastCheckIn = computer.getChildText("Last_Check_in");
     var department = computer.getChildText("Department");
 
-    var rowData = [fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department];
-    sheet.appendRow(rowData);
+    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
   });
+
+  // Write the data starting below the headers
+  sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
 
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
@@ -458,17 +493,20 @@ function classOf2031() {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = spreadsheet.getActiveSheet();
 
-  // Check if the sheet contains data before clearing it
-  if (sheet.getLastRow() > 0) {
-    // Clear existing data in the sheet
-    sheet.getRange(1, 1, sheet.getLastRow(), 7).clear();
+  // Find the last row with data in column A
+  var lastRowWithData = sheet.getLastRow();
+
+  // If there is data below the headers, clear that specific range
+  if (lastRowWithData > 1) {
+    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
   }
 
   // Write headers to the sheet
   var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
-  sheet.appendRow(headers);
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
 
-  // Iterate through the XML data and write it to the sheet
+  // Iterate through the XML data and write it to the sheet starting below the headers
+  var rowData = [];
   computerElements.forEach(function(computer) {
     //changes the font and the size before the data populates into the google
     changeFontAndSize();
@@ -481,9 +519,11 @@ function classOf2031() {
     var lastCheckIn = computer.getChildText("Last_Check_in");
     var department = computer.getChildText("Department");
 
-    var rowData = [fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department];
-    sheet.appendRow(rowData);
+    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
   });
+
+  // Write the data starting below the headers
+  sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
 
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
@@ -514,17 +554,20 @@ function classOf2032() {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = spreadsheet.getActiveSheet();
 
-  // Check if the sheet contains data before clearing it
-  if (sheet.getLastRow() > 0) {
-    // Clear existing data in the sheet
-    sheet.getRange(1, 1, sheet.getLastRow(), 7).clear();
+  // Find the last row with data in column A
+  var lastRowWithData = sheet.getLastRow();
+
+  // If there is data below the headers, clear that specific range
+  if (lastRowWithData > 1) {
+    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
   }
 
   // Write headers to the sheet
   var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
-  sheet.appendRow(headers);
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
 
-  // Iterate through the XML data and write it to the sheet
+  // Iterate through the XML data and write it to the sheet starting below the headers
+  var rowData = [];
   computerElements.forEach(function(computer) {
     //changes the font and the size before the data populates into the google
     changeFontAndSize();
@@ -537,9 +580,11 @@ function classOf2032() {
     var lastCheckIn = computer.getChildText("Last_Check_in");
     var department = computer.getChildText("Department");
 
-    var rowData = [fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department];
-    sheet.appendRow(rowData);
+    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
   });
+
+  // Write the data starting below the headers
+  sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
 
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
