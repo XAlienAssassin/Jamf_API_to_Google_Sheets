@@ -62,22 +62,22 @@ function classOf2024() {
   var xmlDoc = XmlService.parse(data);
   var computerElements = xmlDoc.getRootElement().getChild("computers").getChildren("computer");
 
-  // Create a new Google Sheets spreadsheet or use an existing one
+  // Get the active sheet in the currently open spreadsheet
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = spreadsheet.getSheetByName("Sheet1"); // Replace with your sheet name
+  var sheet = spreadsheet.getActiveSheet();
 
-  // Clear existing data in the sheet
-  sheet.getRange(1, 1, sheet.getLastRow(), 7).clear();
-
-
+  // Check if the sheet contains data before clearing it
+  if (sheet.getLastRow() > 0) {
+    // Clear existing data in the sheet
+    sheet.getRange(1, 1, sheet.getLastRow(), 7).clear();
+  }
 
   // Write headers to the sheet
-  var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department",];
+  var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
   sheet.appendRow(headers);
 
   // Iterate through the XML data and write it to the sheet
   computerElements.forEach(function(computer) {
-
     //changes the font and the size before the data populates into the google
     changeFontAndSize();
 
@@ -97,6 +97,7 @@ function classOf2024() {
 
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
+
 
 function classOf2025() {
   var username = " "; // Replace with your Jamf username
