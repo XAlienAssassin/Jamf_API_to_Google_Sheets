@@ -31,13 +31,12 @@ function uiChanges() {
 
 function changeFontAndSize() {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = spreadsheet.getSheetByName("Sheet1"); // Replace with your sheet name
+  var sheet = spreadsheet.getActiveSheet(); // Get the active sheet
   var range = sheet.getRange("A1:G200"); // Change this to your desired range
   var fontFamily = "Calibri";
   var fontSize = 12;
 
   range.setFontFamily(fontFamily).setFontSize(fontSize);
-
 }
 
 
