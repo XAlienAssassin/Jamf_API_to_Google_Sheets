@@ -12,41 +12,54 @@ Items that need to be changed every year:
 
 function uiChanges() {
   var ui = SpreadsheetApp.getUi();
-  ui.createMenu('Jamf API Collection')
-      .addItem('Class of 2024','classOf2024')
-      .addItem('Class of 2025','classOf2025')
-      .addItem('Class of 2026','classOf2026')
-      .addItem('Class of 2027','classOf2027')
-      .addItem('Class of 2028','classOf2028')
-      .addItem('Class of 2029','classOf2029')
-      .addItem('Class of 2030','classOf2030')
-      .addItem('Class of 2031','classOf2031')
-      .addItem('Class of 2032','classOf2032')
-      .addItem('Class of 2033','classOf2033')
-      .addItem('PreK', 'preK')
-      .addItem('Kindergarten', 'kinderGarten')
-      //.deleteItem('Class of 2024')
-      //.addItem('Class of 2034','classOf2034')
-      .addToUi();
+  var menu = ui.createMenu('Jamf API Collection');
+
+  // Create sub-menu for class years
+  var classYearsMenu = ui.createMenu('Class Years');
+  classYearsMenu.addItem('Class of 2024', 'classOf2024');
+  classYearsMenu.addItem('Class of 2025', 'classOf2025');
+  classYearsMenu.addItem('Class of 2026', 'classOf2026');
+  classYearsMenu.addItem('Class of 2027', 'classOf2027');
+  classYearsMenu.addItem('Class of 2028', 'classOf2028');
+  classYearsMenu.addItem('Class of 2029', 'classOf2029');
+  classYearsMenu.addItem('Class of 2030', 'classOf2030');
+  classYearsMenu.addItem('Class of 2031', 'classOf2031');
+  classYearsMenu.addItem('Class of 2032', 'classOf2032');
+  classYearsMenu.addItem('Class of 2033', 'classOf2033');
+  menu.addSubMenu(classYearsMenu);
+
+  // Add other menu items iPads
+  var iPadgrades = ui.createMenu('iPad Grades');
+  iPadgrades.addItem('PreK', 'preK');
+  iPadgrades.addItem('Kindergarten', 'kinderGarten');
+  iPadgrades.addItem('1stGrade', 'oneGrade');
+  iPadgrades.addItem('2ndGrade', 'twoGrade');
+  menu.addSubMenu(iPadgrades);
+
+
+  menu.addSeparator();
+  menu.addItem('Pull Class data through searchid', 'dataPullSearchId');
+
+  // Add the main menu to the UI
+  menu.addToUi();
 }
+
 
 
 function changeFontAndSize() {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = spreadsheet.getActiveSheet(); // Get the active sheet
-  var range = sheet.getRange("A1:G200"); // Change this to your desired range
+  var range = sheet.getRange("A1:K500"); // Change this to your desired range
   var fontFamily = "Calibri";
   var fontSize = 12;
 
   range.setFontFamily(fontFamily).setFontSize(fontSize);
 }
 
-
-function classOf2024() {
+function getDataPopulateDataComputers(advancedSearchID) {
   var username = " "; // Replace with your Jamf username
   var password = " "; // Replace with your Jamf password
   var jamfURL = " "; // Replace with your Jamf instance URL
-  var advancedSearchID = "74"; // Replace with the ID of your advanced computer search
 
   var headers = {
     "Authorization": "Basic " + Utilities.base64Encode(username + ":" + password)
@@ -73,15 +86,16 @@ function classOf2024() {
 
   // If there is data below the headers, clear that specific range
   if (lastRowWithData > 1) {
-    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
+    sheet.getRange(2, 1, lastRowWithData - 1, 8).clear();
   }
 
   // Write headers to the sheet
-  var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
+  var headers = ["Date Checked", "Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
 
   // Iterate through the XML data and write it to the sheet starting below the headers
   var rowData = [];
+  var currentDate = new Date(); // Get the current date
   computerElements.forEach(function(computer) {
     //changes the font and the size before the data populates into the google
     changeFontAndSize();
@@ -94,570 +108,66 @@ function classOf2024() {
     var lastCheckIn = computer.getChildText("Last_Check_in");
     var department = computer.getChildText("Department");
 
-    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
+    rowData.push([currentDate, fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
   });
 
   // Write the data starting below the headers
   sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
 
+  // Sort all the data to last checkin
+  sheet.getRange(2, 1, rowData.length, rowData[0].length).sort(7); // 7 is the column index for "Last Check In"
+
+  // Sort all the data to align the the left side
+  sheet.getRange(2, 1, rowData.length, rowData[0].length).setHorizontalAlignment("left").setVerticalAlignment("middle");
+
   Logger.log("API Response parsed and data written to Google Sheets.");
+}
+
+function classOf2024() {
+  getDataPopulateDataComputers("74");
 }
 
 function classOf2025() {
-  var username = " "; // Replace with your Jamf username
-  var password = " "; // Replace with your Jamf password
-  var jamfURL = " "; // Replace with your Jamf instance URL
-  var advancedSearchID = "144"; // Replace with the ID of your advanced computer search
-
-  var headers = {
-    "Authorization": "Basic " + Utilities.base64Encode(username + ":" + password)
-  };
-  
-  var options = {
-    "method": "get",
-    "headers": headers
-  };
-
-  var response = UrlFetchApp.fetch(jamfURL + "/JSSResource/advancedcomputersearches/id/" + advancedSearchID, options);
-  var data = response.getContentText();
-
-  // Parse the XML response
-  var xmlDoc = XmlService.parse(data);
-  var computerElements = xmlDoc.getRootElement().getChild("computers").getChildren("computer");
-
-  // Get the active sheet in the currently open spreadsheet
-  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = spreadsheet.getActiveSheet();
-
-  // Find the last row with data in column A
-  var lastRowWithData = sheet.getLastRow();
-
-  // If there is data below the headers, clear that specific range
-  if (lastRowWithData > 1) {
-    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
-  }
-
-  // Write headers to the sheet
-  var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-
-  // Iterate through the XML data and write it to the sheet starting below the headers
-  var rowData = [];
-  computerElements.forEach(function(computer) {
-    //changes the font and the size before the data populates into the google
-    changeFontAndSize();
-
-    var fullName = computer.getChildText("Full_Name");
-    var computerName = computer.getChildText("Computer_Name");
-    var serialNumber = computer.getChildText("Serial_Number");
-    var model = computer.getChildText("Model");
-    var operatingSystem = computer.getChildText("Operating_System");
-    var lastCheckIn = computer.getChildText("Last_Check_in");
-    var department = computer.getChildText("Department");
-
-    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
-  });
-
-  // Write the data starting below the headers
-  sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
-
-  Logger.log("API Response parsed and data written to Google Sheets.");
+  getDataPopulateDataComputers("144");
 }
 
 function classOf2026() {
-  var username = " "; // Replace with your Jamf username
-  var password = " "; // Replace with your Jamf password
-  var jamfURL = " "; // Replace with your Jamf instance URL
-  var advancedSearchID = "155"; // Replace with the ID of your advanced computer search
-
-  var headers = {
-    "Authorization": "Basic " + Utilities.base64Encode(username + ":" + password)
-  };
-  
-  var options = {
-    "method": "get",
-    "headers": headers
-  };
-
-  var response = UrlFetchApp.fetch(jamfURL + "/JSSResource/advancedcomputersearches/id/" + advancedSearchID, options);
-  var data = response.getContentText();
-
-  // Parse the XML response
-  var xmlDoc = XmlService.parse(data);
-  var computerElements = xmlDoc.getRootElement().getChild("computers").getChildren("computer");
-
-  // Get the active sheet in the currently open spreadsheet
-  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = spreadsheet.getActiveSheet();
-
-  // Find the last row with data in column A
-  var lastRowWithData = sheet.getLastRow();
-
-  // If there is data below the headers, clear that specific range
-  if (lastRowWithData > 1) {
-    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
-  }
-
-  // Write headers to the sheet
-  var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-
-  // Iterate through the XML data and write it to the sheet starting below the headers
-  var rowData = [];
-  computerElements.forEach(function(computer) {
-    //changes the font and the size before the data populates into the google
-    changeFontAndSize();
-
-    var fullName = computer.getChildText("Full_Name");
-    var computerName = computer.getChildText("Computer_Name");
-    var serialNumber = computer.getChildText("Serial_Number");
-    var model = computer.getChildText("Model");
-    var operatingSystem = computer.getChildText("Operating_System");
-    var lastCheckIn = computer.getChildText("Last_Check_in");
-    var department = computer.getChildText("Department");
-
-    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
-  });
-
-  // Write the data starting below the headers
-  sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
-
-  Logger.log("API Response parsed and data written to Google Sheets.");
+  getDataPopulateDataComputers("155");
 }
 
 function classOf2027() {
-  var username = " "; // Replace with your Jamf username
-  var password = " "; // Replace with your Jamf password
-  var jamfURL = " "; // Replace with your Jamf instance URL
-  var advancedSearchID = "179"; // Replace with the ID of your advanced computer search
-
-  var headers = {
-    "Authorization": "Basic " + Utilities.base64Encode(username + ":" + password)
-  };
-  
-  var options = {
-    "method": "get",
-    "headers": headers
-  };
-
-  var response = UrlFetchApp.fetch(jamfURL + "/JSSResource/advancedcomputersearches/id/" + advancedSearchID, options);
-  var data = response.getContentText();
-
-  // Parse the XML response
-  var xmlDoc = XmlService.parse(data);
-  var computerElements = xmlDoc.getRootElement().getChild("computers").getChildren("computer");
-
-  // Get the active sheet in the currently open spreadsheet
-  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = spreadsheet.getActiveSheet();
-
-  // Find the last row with data in column A
-  var lastRowWithData = sheet.getLastRow();
-
-  // If there is data below the headers, clear that specific range
-  if (lastRowWithData > 1) {
-    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
-  }
-
-  // Write headers to the sheet
-  var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-
-  // Iterate through the XML data and write it to the sheet starting below the headers
-  var rowData = [];
-  computerElements.forEach(function(computer) {
-    //changes the font and the size before the data populates into the google
-    changeFontAndSize();
-
-    var fullName = computer.getChildText("Full_Name");
-    var computerName = computer.getChildText("Computer_Name");
-    var serialNumber = computer.getChildText("Serial_Number");
-    var model = computer.getChildText("Model");
-    var operatingSystem = computer.getChildText("Operating_System");
-    var lastCheckIn = computer.getChildText("Last_Check_in");
-    var department = computer.getChildText("Department");
-
-    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
-  });
-
-  // Write the data starting below the headers
-  sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
-
-  Logger.log("API Response parsed and data written to Google Sheets.");
+  getDataPopulateDataComputers("175");
 }
 
 function classOf2028() {
-  var username = " "; // Replace with your Jamf username
-  var password = " "; // Replace with your Jamf password
-  var jamfURL = " "; // Replace with your Jamf instance URL
-  var advancedSearchID = "199"; // Replace with the ID of your advanced computer search
-
-  var headers = {
-    "Authorization": "Basic " + Utilities.base64Encode(username + ":" + password)
-  };
-  
-  var options = {
-    "method": "get",
-    "headers": headers
-  };
-
-  var response = UrlFetchApp.fetch(jamfURL + "/JSSResource/advancedcomputersearches/id/" + advancedSearchID, options);
-  var data = response.getContentText();
-
-  // Parse the XML response
-  var xmlDoc = XmlService.parse(data);
-  var computerElements = xmlDoc.getRootElement().getChild("computers").getChildren("computer");
-
-  // Get the active sheet in the currently open spreadsheet
-  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = spreadsheet.getActiveSheet();
-
-  // Find the last row with data in column A
-  var lastRowWithData = sheet.getLastRow();
-
-  // If there is data below the headers, clear that specific range
-  if (lastRowWithData > 1) {
-    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
-  }
-
-  // Write headers to the sheet
-  var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-
-  // Iterate through the XML data and write it to the sheet starting below the headers
-  var rowData = [];
-  computerElements.forEach(function(computer) {
-    //changes the font and the size before the data populates into the google
-    changeFontAndSize();
-
-    var fullName = computer.getChildText("Full_Name");
-    var computerName = computer.getChildText("Computer_Name");
-    var serialNumber = computer.getChildText("Serial_Number");
-    var model = computer.getChildText("Model");
-    var operatingSystem = computer.getChildText("Operating_System");
-    var lastCheckIn = computer.getChildText("Last_Check_in");
-    var department = computer.getChildText("Department");
-
-    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
-  });
-
-  // Write the data starting below the headers
-  sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
-
-  Logger.log("API Response parsed and data written to Google Sheets.");
+  getDataPopulateDataComputers("179");
 }
 
 function classOf2029() {
-  var username = " "; // Replace with your Jamf username
-  var password = " "; // Replace with your Jamf password
-  var jamfURL = " "; // Replace with your Jamf instance URL
-  var advancedSearchID = "115"; // Replace with the ID of your advanced computer search
-
-  var headers = {
-    "Authorization": "Basic " + Utilities.base64Encode(username + ":" + password)
-  };
-  
-  var options = {
-    "method": "get",
-    "headers": headers
-  };
-
-  var response = UrlFetchApp.fetch(jamfURL + "/JSSResource/advancedcomputersearches/id/" + advancedSearchID, options);
-  var data = response.getContentText();
-
-  // Parse the XML response
-  var xmlDoc = XmlService.parse(data);
-  var computerElements = xmlDoc.getRootElement().getChild("computers").getChildren("computer");
-
-  // Get the active sheet in the currently open spreadsheet
-  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = spreadsheet.getActiveSheet();
-
-  // Find the last row with data in column A
-  var lastRowWithData = sheet.getLastRow();
-
-  // If there is data below the headers, clear that specific range
-  if (lastRowWithData > 1) {
-    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
-  }
-
-  // Write headers to the sheet
-  var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-
-  // Iterate through the XML data and write it to the sheet starting below the headers
-  var rowData = [];
-  computerElements.forEach(function(computer) {
-    //changes the font and the size before the data populates into the google
-    changeFontAndSize();
-
-    var fullName = computer.getChildText("Full_Name");
-    var computerName = computer.getChildText("Computer_Name");
-    var serialNumber = computer.getChildText("Serial_Number");
-    var model = computer.getChildText("Model");
-    var operatingSystem = computer.getChildText("Operating_System");
-    var lastCheckIn = computer.getChildText("Last_Check_in");
-    var department = computer.getChildText("Department");
-
-    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
-  });
-
-  // Write the data starting below the headers
-  sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
-
-  Logger.log("API Response parsed and data written to Google Sheets.");
+  getDataPopulateDataComputers("199");
 }
 
 function classOf2030() {
-  var username = " "; // Replace with your Jamf username
-  var password = " "; // Replace with your Jamf password
-  var jamfURL = " "; // Replace with your Jamf instance URL
-  var advancedSearchID = "123"; // Replace with the ID of your advanced computer search
-
-  var headers = {
-    "Authorization": "Basic " + Utilities.base64Encode(username + ":" + password)
-  };
-  
-  var options = {
-    "method": "get",
-    "headers": headers
-  };
-
-  var response = UrlFetchApp.fetch(jamfURL + "/JSSResource/advancedcomputersearches/id/" + advancedSearchID, options);
-  var data = response.getContentText();
-
-  // Parse the XML response
-  var xmlDoc = XmlService.parse(data);
-  var computerElements = xmlDoc.getRootElement().getChild("computers").getChildren("computer");
-
-  // Get the active sheet in the currently open spreadsheet
-  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = spreadsheet.getActiveSheet();
-
-  // Find the last row with data in column A
-  var lastRowWithData = sheet.getLastRow();
-
-  // If there is data below the headers, clear that specific range
-  if (lastRowWithData > 1) {
-    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
-  }
-
-  // Write headers to the sheet
-  var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-
-  // Iterate through the XML data and write it to the sheet starting below the headers
-  var rowData = [];
-  computerElements.forEach(function(computer) {
-    //changes the font and the size before the data populates into the google
-    changeFontAndSize();
-
-    var fullName = computer.getChildText("Full_Name");
-    var computerName = computer.getChildText("Computer_Name");
-    var serialNumber = computer.getChildText("Serial_Number");
-    var model = computer.getChildText("Model");
-    var operatingSystem = computer.getChildText("Operating_System");
-    var lastCheckIn = computer.getChildText("Last_Check_in");
-    var department = computer.getChildText("Department");
-
-    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
-  });
-
-  // Write the data starting below the headers
-  sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
-
-  Logger.log("API Response parsed and data written to Google Sheets.");
+  getDataPopulateDataComputers("115");
 }
 
 function classOf2031() {
-  var username = " "; // Replace with your Jamf username
-  var password = " "; // Replace with your Jamf password
-  var jamfURL = " "; // Replace with your Jamf instance URL
-  var advancedSearchID = "189"; // Replace with the ID of your advanced computer search
-
-  var headers = {
-    "Authorization": "Basic " + Utilities.base64Encode(username + ":" + password)
-  };
-  
-  var options = {
-    "method": "get",
-    "headers": headers
-  };
-
-  var response = UrlFetchApp.fetch(jamfURL + "/JSSResource/advancedcomputersearches/id/" + advancedSearchID, options);
-  var data = response.getContentText();
-
-  // Parse the XML response
-  var xmlDoc = XmlService.parse(data);
-  var computerElements = xmlDoc.getRootElement().getChild("computers").getChildren("computer");
-
-  // Get the active sheet in the currently open spreadsheet
-  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = spreadsheet.getActiveSheet();
-
-  // Find the last row with data in column A
-  var lastRowWithData = sheet.getLastRow();
-
-  // If there is data below the headers, clear that specific range
-  if (lastRowWithData > 1) {
-    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
-  }
-
-  // Write headers to the sheet
-  var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-
-  // Iterate through the XML data and write it to the sheet starting below the headers
-  var rowData = [];
-  computerElements.forEach(function(computer) {
-    //changes the font and the size before the data populates into the google
-    changeFontAndSize();
-
-    var fullName = computer.getChildText("Full_Name");
-    var computerName = computer.getChildText("Computer_Name");
-    var serialNumber = computer.getChildText("Serial_Number");
-    var model = computer.getChildText("Model");
-    var operatingSystem = computer.getChildText("Operating_System");
-    var lastCheckIn = computer.getChildText("Last_Check_in");
-    var department = computer.getChildText("Department");
-
-    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
-  });
-
-  // Write the data starting below the headers
-  sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
-
-  Logger.log("API Response parsed and data written to Google Sheets.");
+  getDataPopulateDataComputers("189");
 }
 
 function classOf2032() {
-  var username = " "; // Replace with your Jamf username
-  var password = " "; // Replace with your Jamf password
-  var jamfURL = " "; // Replace with your Jamf instance URL
-  var advancedSearchID = "216"; // Replace with the ID of your advanced computer search
-
-  var headers = {
-    "Authorization": "Basic " + Utilities.base64Encode(username + ":" + password)
-  };
-  
-  var options = {
-    "method": "get",
-    "headers": headers
-  };
-
-  var response = UrlFetchApp.fetch(jamfURL + "/JSSResource/advancedcomputersearches/id/" + advancedSearchID, options);
-  var data = response.getContentText();
-
-  // Parse the XML response
-  var xmlDoc = XmlService.parse(data);
-  var computerElements = xmlDoc.getRootElement().getChild("computers").getChildren("computer");
-
-  // Get the active sheet in the currently open spreadsheet
-  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = spreadsheet.getActiveSheet();
-
-  // Find the last row with data in column A
-  var lastRowWithData = sheet.getLastRow();
-
-  // If there is data below the headers, clear that specific range
-  if (lastRowWithData > 1) {
-    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
-  }
-
-  // Write headers to the sheet
-  var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-
-  // Iterate through the XML data and write it to the sheet starting below the headers
-  var rowData = [];
-  computerElements.forEach(function(computer) {
-    //changes the font and the size before the data populates into the google
-    changeFontAndSize();
-
-    var fullName = computer.getChildText("Full_Name");
-    var computerName = computer.getChildText("Computer_Name");
-    var serialNumber = computer.getChildText("Serial_Number");
-    var model = computer.getChildText("Model");
-    var operatingSystem = computer.getChildText("Operating_System");
-    var lastCheckIn = computer.getChildText("Last_Check_in");
-    var department = computer.getChildText("Department");
-
-    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
-  });
-
-  // Write the data starting below the headers
-  sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
-
-  Logger.log("API Response parsed and data written to Google Sheets.");
+  getDataPopulateDataComputers("216");
 }
 
 function classOf2033() {
-  var username = " "; // Replace with your Jamf username
-  var password = " "; // Replace with your Jamf password
-  var jamfURL = " "; // Replace with your Jamf instance URL
-  var advancedSearchID = "244"; // Replace with the ID of your advanced computer search
-
-  var headers = {
-    "Authorization": "Basic " + Utilities.base64Encode(username + ":" + password)
-  };
-  
-  var options = {
-    "method": "get",
-    "headers": headers
-  };
-
-  var response = UrlFetchApp.fetch(jamfURL + "/JSSResource/advancedcomputersearches/id/" + advancedSearchID, options);
-  var data = response.getContentText();
-
-  // Parse the XML response
-  var xmlDoc = XmlService.parse(data);
-  var computerElements = xmlDoc.getRootElement().getChild("computers").getChildren("computer");
-
-  // Get the active sheet in the currently open spreadsheet
-  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = spreadsheet.getActiveSheet();
-
-  // Find the last row with data in column A
-  var lastRowWithData = sheet.getLastRow();
-
-  // If there is data below the headers, clear that specific range
-  if (lastRowWithData > 1) {
-    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
-  }
-
-  // Write headers to the sheet
-  var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-
-  // Iterate through the XML data and write it to the sheet starting below the headers
-  var rowData = [];
-  computerElements.forEach(function(computer) {
-    //changes the font and the size before the data populates into the google
-    changeFontAndSize();
-
-    var fullName = computer.getChildText("Full_Name");
-    var computerName = computer.getChildText("Computer_Name");
-    var serialNumber = computer.getChildText("Serial_Number");
-    var model = computer.getChildText("Model");
-    var operatingSystem = computer.getChildText("Operating_System");
-    var lastCheckIn = computer.getChildText("Last_Check_in");
-    var department = computer.getChildText("Department");
-
-    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
-  });
-
-  // Write the data starting below the headers
-  sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
-
-  Logger.log("API Response parsed and data written to Google Sheets.");
+  getDataPopulateDataComputers("244");
 }
 
 
-function preK() {
+function getDataPopulateDataiPads(advancedSearchID) {
   var username = " "; // Replace with your Jamf username
   var password = " "; // Replace with your Jamf password
   var jamfURL = " "; // Replace with your Jamf instance URL
-  var advancedSearchID = "71"; // Replace with the ID of your advanced mobile search
 
   var headers = {
     "Authorization": "Basic " + Utilities.base64Encode(username + ":" + password)
@@ -684,15 +194,16 @@ function preK() {
 
   // If there is data below the headers, clear that specific range
   if (lastRowWithData > 1) {
-    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
+    sheet.getRange(2, 1, lastRowWithData - 1, 8).clear();
   }
 
   // Write headers to the sheet
-  var headers = ["Full Name", "Display Name", "Serial Number", "Model", "iOS Version", "Last Inventory Update", "Username"];
+  var headers = ["Date Checked", "Full Name", "Display Name", "Serial Number", "Model", "iOS Version", "Last Inventory Update", "Username"];
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
 
   // Iterate through the XML data and write it to the sheet starting below the headers
   var rowData = [];
+  var currentdate = new Date(); // Gets the current Date
   mobileElements.forEach(function(mobile) {
     //changes the font and the size before the data populates into the google
     changeFontAndSize();
@@ -705,75 +216,32 @@ function preK() {
     var lastInventoryUpdate = mobile.getChildText("Last_Inventory_Update");
     var userName = mobile.getChildText("Username");
 
-    rowData.push([fullName, displayName, serialNumber, model, iOSVersion, lastInventoryUpdate, userName]);
+    rowData.push([currentdate, fullName, displayName, serialNumber, model, iOSVersion, lastInventoryUpdate, userName]);
   });
-
+ 
   // Write the data starting below the headers
   sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
+
+  // Sort all the data to last checkin
+  sheet.getRange(2, 1, rowData.length, rowData[0].length).sort(7); // 7 is the column index for "Last Check In"
+
+  // Sort all the data to align the the left side
+  sheet.getRange(2, 1, rowData.length, rowData[0].length).setHorizontalAlignment("left").setVerticalAlignment("middle");
 
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
 
 
 function kinderGarten() {
-  var username = " "; // Replace with your Jamf username
-  var password = " "; // Replace with your Jamf password
-  var jamfURL = " "; // Replace with your Jamf instance URL
-  var advancedSearchID = "106"; // Replace with the ID of your advanced mobile search
+  getDataPopulateDataiPads("106");
+}
 
-  var headers = {
-    "Authorization": "Basic " + Utilities.base64Encode(username + ":" + password)
-  };
-  
-  var options = {
-    "method": "get",
-    "headers": headers
-  };
+function oneGrade() {
+  getDataPopulateDataiPads("187");
+}
 
-  var response = UrlFetchApp.fetch(jamfURL + "/JSSResource/advancedmobiledevicesearches/id/" + advancedSearchID, options);
-  var data = response.getContentText();
-
-  // Parse the XML response
-  var xmlDoc = XmlService.parse(data);
-  var mobileElements = xmlDoc.getRootElement().getChild("mobile_devices").getChildren("mobile_device");
-
-  // Get the active sheet in the currently open spreadsheet
-  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = spreadsheet.getActiveSheet();
-
-  // Find the last row with data in column A
-  var lastRowWithData = sheet.getLastRow();
-
-  // If there is data below the headers, clear that specific range
-  if (lastRowWithData > 1) {
-    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
-  }
-
-  // Write headers to the sheet
-  var headers = ["Full Name", "Display Name", "Serial Number", "Model", "iOS Version", "Last Inventory Update", "Username"];
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-
-  // Iterate through the XML data and write it to the sheet starting below the headers
-  var rowData = [];
-  mobileElements.forEach(function(mobile) {
-    //changes the font and the size before the data populates into the google
-    changeFontAndSize();
-
-    var fullName = mobile.getChildText("Full_Name");
-    var displayName = mobile.getChildText("Display_Name");
-    var serialNumber = mobile.getChildText("Serial_Number");
-    var model = mobile.getChildText("Model");
-    var iOSVersion = mobile.getChildText("iOS_Version");
-    var lastInventoryUpdate = mobile.getChildText("Last_Inventory_Update");
-    var userName = mobile.getChildText("Username");
-
-    rowData.push([fullName, displayName, serialNumber, model, iOSVersion, lastInventoryUpdate, userName]);
-  });
-
-  // Write the data starting below the headers
-  sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
-
-  Logger.log("API Response parsed and data written to Google Sheets.");
+function twoGrade() {
+  getDataPopulateDataiPads("105");
 }
 
 
@@ -810,15 +278,16 @@ function dataPullSearchId() {
 
   // If there is data below the headers, clear that specific range
   if (lastRowWithData > 1) {
-    sheet.getRange(2, 1, lastRowWithData - 1, 7).clear();
+    sheet.getRange(2, 1, lastRowWithData - 1, 8).clear();
   }
 
   // Write headers to the sheet
-  var headers = ["Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
+  var headers = ["Date Checked", "Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
 
   // Iterate through the XML data and write it to the sheet starting below the headers
   var rowData = [];
+  var currentDate = new Date(); // Get the current date
   computerElements.forEach(function(computer) {
     //changes the font and the size before the data populates into the google
     changeFontAndSize();
@@ -831,11 +300,17 @@ function dataPullSearchId() {
     var lastCheckIn = computer.getChildText("Last_Check_in");
     var department = computer.getChildText("Department");
 
-    rowData.push([fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
+    rowData.push([currentDate, fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
   });
 
   // Write the data starting below the headers
   sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
+
+  // Sort all the data to last checkin
+  sheet.getRange(2, 1, rowData.length, rowData[0].length).sort(7); // 7 is the column index for "Last Check In"
+
+  // Sort all the data to align the the left side
+  sheet.getRange(2, 1, rowData.length, rowData[0].length).setHorizontalAlignment("left").setVerticalAlignment("middle");
 
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
