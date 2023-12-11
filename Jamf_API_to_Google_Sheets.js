@@ -38,8 +38,8 @@ function uiChanges() {
 
 
   menu.addSeparator();
-  menu.addItem('Pull Class data through searchid', 'dataPullSearchId');
-
+  menu.addItem('Pull Class data through searchid iPads', 'dataPullSearchIdIpads');
+  menu.addItem('Pull Class data through searchid Computers', 'dataPullSearchIdComputers');
   // Add the main menu to the UI
   menu.addToUi();
 }
@@ -247,7 +247,18 @@ function twoGrade() {
 }
 
 
-function dataPullSearchId() {
-  getDataPopulateDataiPads(advancedSearchID);
+function dataPullSearchIdIpads() {
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = spreadsheet.getActiveSheet();
+
   var advancedSearchID = sheet.getRange("A1").getValue(); // Read the advanced search ID from A1
+  getDataPopulateDataiPads(advancedSearchID);
+}
+
+function dataPullSearchIdComputers() {
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = spreadsheet.getActiveSheet();
+
+  var advancedSearchID = sheet.getRange("A1").getValue(); // Read the advanced search ID from A1
+  getDataPopulateDataComputers(advancedSearchID);
 }
