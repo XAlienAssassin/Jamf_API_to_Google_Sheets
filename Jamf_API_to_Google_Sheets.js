@@ -52,14 +52,15 @@ function changeFontAndSize() {
   var range = sheet.getRange("A1:K500"); // Change this to your desired range
   var fontFamily = "Calibri";
   var fontSize = 12;
+  var numberFormat = ('MM/dd/yyyy');
 
-  range.setFontFamily(fontFamily).setFontSize(fontSize);
+  range.setFontFamily(fontFamily).setFontSize(fontSize).setNumberFormat(numberFormat);
 }
 
 function getDataPopulateDataComputers(advancedSearchID) {
-  var username = " "; // Replace with your Jamf username
-  var password = " "; // Replace with your Jamf password
-  var jamfURL = " "; // Replace with your Jamf instance URL
+  var username = ""; // Replace with your Jamf username
+  var password = ""; // Replace with your Jamf password
+  var jamfURL = ""; // Replace with your Jamf instance URL
 
   var headers = {
     "Authorization": "Basic " + Utilities.base64Encode(username + ":" + password)
@@ -90,7 +91,7 @@ function getDataPopulateDataComputers(advancedSearchID) {
   }
 
   // Write headers to the sheet
-  var headers = ["Date Checked", "Full Name", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department"];
+  var headers = ["Date Checked", "Full Name", "Email Address", "Computer Name", "Serial Number", "Model", "Operating System", "Last Check In", "Department",];
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
 
   // Iterate through the XML data and write it to the sheet starting below the headers
@@ -101,6 +102,7 @@ function getDataPopulateDataComputers(advancedSearchID) {
     changeFontAndSize();
 
     var fullName = computer.getChildText("Full_Name");
+    var emailAddress = computer.getChildText("Email_Address")
     var computerName = computer.getChildText("Computer_Name");
     var serialNumber = computer.getChildText("Serial_Number");
     var model = computer.getChildText("Model");
@@ -108,14 +110,15 @@ function getDataPopulateDataComputers(advancedSearchID) {
     var lastCheckIn = computer.getChildText("Last_Check_in");
     var department = computer.getChildText("Department");
 
-    rowData.push([currentDate, fullName, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
+    rowData.push([currentDate, fullName, emailAddress, computerName, serialNumber, model, operatingSystem, lastCheckIn, department]);
+    
   });
 
   // Write the data starting below the headers
   sheet.getRange(2, 1, rowData.length, rowData[0].length).setValues(rowData);
 
   // Sort all the data to last checkin
-  sheet.getRange(2, 1, rowData.length, rowData[0].length).sort(7); // 7 is the column index for "Last Check In"
+  sheet.getRange(2, 1, rowData.length, rowData[0].length).sort(8); // 7 is the column index for "Last Check In"
 
   // Sort all the data to align the the left side
   sheet.getRange(2, 1, rowData.length, rowData[0].length).setHorizontalAlignment("left").setVerticalAlignment("middle");
@@ -165,9 +168,9 @@ function classOf2033() {
 
 
 function getDataPopulateDataiPads(advancedSearchID) {
-  var username = " "; // Replace with your Jamf username
-  var password = " "; // Replace with your Jamf password
-  var jamfURL = " "; // Replace with your Jamf instance URL
+  var username = ""; // Replace with your Jamf username
+  var password = ""; // Replace with your Jamf password
+  var jamfURL = ""; // Replace with your Jamf instance URL
 
   var headers = {
     "Authorization": "Basic " + Utilities.base64Encode(username + ":" + password)
@@ -231,6 +234,9 @@ function getDataPopulateDataiPads(advancedSearchID) {
   Logger.log("API Response parsed and data written to Google Sheets.");
 }
 
+function preK() {
+  getDataPopulateDataiPads("71");
+}
 
 function kinderGarten() {
   getDataPopulateDataiPads("106");
