@@ -26,6 +26,8 @@ function getBearerToken() {
   var authTokenText = authTokenResponse.getContentText();
   var authToken = JSON.parse(authTokenText).token;
 
+  Logger.log("Bearer Token: " + authToken); // Log the bearer token
+
   return authToken;
 }
 
@@ -155,6 +157,7 @@ function getDataPopulateDataComputers(advancedSearchID) {
 
   Logger.log("API Response parsed and data written to Google Sheets.");
 
+  invalidateBearerToken(authToken);
 }
 
 function classOf2024() {
@@ -262,6 +265,7 @@ function getDataPopulateDataiPads(advancedSearchID) {
 
   Logger.log("API Response parsed and data written to Google Sheets.");
 
+  invalidateBearerToken(authToken);
 }
 
 function preK() {
