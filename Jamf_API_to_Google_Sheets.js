@@ -9,6 +9,37 @@ Items that need to be changed every year:
   These will be the steps every year unless the api changes.
 */
 
+function getBearerToken() {
+  var username = ""; // Replace with your Jamf username
+  var password = ""; // Replace with your Jamf password
+  var jamfURL = ""; // Replace with your Jamf instance URL
+
+  var authTokenResponse = UrlFetchApp.fetch(jamfURL + "/api/v1/auth/token", {
+    "method": "post",
+    "headers": {
+      "Authorization": "Basic " + Utilities.base64Encode(username + ":" + password),
+      "Accept": "application/json"
+    },
+    "muteHttpExceptions": true
+  });
+
+  var authTokenText = authTokenResponse.getContentText();
+  var authToken = JSON.parse(authTokenText).token;
+
+  return authToken;
+}
+
+function invalidateBearerToken(token) {
+  var jamfURL = ""; // Replace with your Jamf instance URL
+
+  UrlFetchApp.fetch(jamfURL + "/api/v1/auth/invalidate-token", {
+    "method": "post",
+    "headers": {
+      "Authorization": "Bearer " + token
+    }
+  });
+}
+
 
 function uiChanges() {
   var ui = SpreadsheetApp.getUi();
@@ -58,12 +89,11 @@ function changeFontAndSize() {
 }
 
 function getDataPopulateDataComputers(advancedSearchID) {
-  var username = ""; // Replace with your Jamf username
-  var password = ""; // Replace with your Jamf password
   var jamfURL = ""; // Replace with your Jamf instance URL
+  var authToken = getBearerToken(); // Get the bearer token
 
   var headers = {
-    "Authorization": "Basic " + Utilities.base64Encode(username + ":" + password)
+    "Authorization": "Bearer " + authToken
   };
   
   var options = {
@@ -124,6 +154,7 @@ function getDataPopulateDataComputers(advancedSearchID) {
   sheet.getRange(2, 1, rowData.length, rowData[0].length).setHorizontalAlignment("left").setVerticalAlignment("middle");
 
   Logger.log("API Response parsed and data written to Google Sheets.");
+
 }
 
 function classOf2024() {
@@ -168,19 +199,17 @@ function classOf2033() {
 
 
 function getDataPopulateDataiPads(advancedSearchID) {
-  var username = ""; // Replace with your Jamf username
-  var password = ""; // Replace with your Jamf password
   var jamfURL = ""; // Replace with your Jamf instance URL
+  var authToken = getBearerToken(); // Get the bearer token
 
   var headers = {
-    "Authorization": "Basic " + Utilities.base64Encode(username + ":" + password)
+    "Authorization": "Bearer " + authToken
   };
   
   var options = {
     "method": "get",
     "headers": headers
   };
-
   var response = UrlFetchApp.fetch(jamfURL + "/JSSResource/advancedmobiledevicesearches/id/" + advancedSearchID, options);
   var data = response.getContentText();
 
@@ -232,6 +261,7 @@ function getDataPopulateDataiPads(advancedSearchID) {
   sheet.getRange(2, 1, rowData.length, rowData[0].length).setHorizontalAlignment("left").setVerticalAlignment("middle");
 
   Logger.log("API Response parsed and data written to Google Sheets.");
+
 }
 
 function preK() {
